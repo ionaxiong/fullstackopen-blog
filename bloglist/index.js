@@ -1,7 +1,5 @@
 const app = require("./app");
-require("dotenv").config();
-const { Sequelize } = require("sequelize");
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+
 const http = require("http");
 const config = require("./utils/config");
 const logger = require("./utils/logger");

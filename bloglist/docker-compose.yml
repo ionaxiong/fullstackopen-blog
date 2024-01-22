@@ -5,13 +5,12 @@ services:
     image: postgres
     restart: always
     ports:
-      - 8080:8080
+      - 5432:5432
     environment:
       POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_USER: postgres
     volumes:
-      - ./bloglist/models/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./postgres_data:/var/lib/postgresql/data
+      # - ./models/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - /postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:

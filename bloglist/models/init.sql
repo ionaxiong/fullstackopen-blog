@@ -20,7 +20,7 @@ CREATE TABLE blogs (
 );
 
 INSERT INTO blogs (author, title, url, likes, comments, user_id)
-VALUES ('Michael Chan', 'React patterns', 'https://reactpatterns.com/', 7, 1),
-       ('Michael Chan', 'Go To Statement Considered Harmful', 'https://reactpatterns.com/', 5, 1),
-       ('Edsger W. Dijkstra', 'Canonical string reduction', 'http://example.com', 12, ["good"], 2),
+VALUES ('Michael Chan', 'React patterns', 'https://reactpatterns.com/', 7, null, 1),
+       ('Michael Chan', 'Go To Statement Considered Harmful', 'https://x.com/', 5, null, 1),
+       ('Edsger W. Dijkstra', 'Canonical string reduction', 'http://example.com', 12, '{"good", "123"}', 2)
 

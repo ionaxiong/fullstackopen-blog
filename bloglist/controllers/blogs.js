@@ -11,9 +11,14 @@ const Blog = require("../models/blog");
 
 // get all blogs, refactored
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
+  const blogs = await Blog.findAll();
+  console.log(Blog.findAll());
   response.json(blogs);
 });
+// blogsRouter.get("/", async (request, response) => {
+//   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
+//   response.json(blogs);
+// });
 
 //get blog by id, refactored
 
@@ -30,29 +35,35 @@ blogsRouter.get("/:id", async (request, response, next) => {
 //post blog, refactored
 // eslint-disable-next-line no-unused-vars
 blogsRouter.post("/", async (request, response, next) => {
-  const body = request.body;
-  // const decodedToken = jwt.verify(request.token, process.env.SECRET);
-  if (!request.token || !request.user) {
-    return response.status(401).json({ error: "token missing or invalid" });
-  }
-  // const user = await User.findById(decodedToken.id);
-  const user = request.user;
-  // console.log("user in controller----------",user.id)
-  const blog = new Blog({
-    author: body.author,
-    title: body.title,
-    url: body.url,
-    likes: body.likes || 0,
-    user: user._id,
-    comments: body.comments || [],
-  });
-  
-  const savedBlog = await blog.save();
-  user.blogs = user.blogs.concat(savedBlog._id);
-  await user.save();
-  
-  response.json(savedBlog);
+  console.log(request.body);
+  const blog = await Blog.create(request.body);
+  response.json(blog);
 });
+
+// blogsRouter.post("/", async (request, response, next) => {
+//   const body = request.body;
+//   // const decodedToken = jwt.verify(request.token, process.env.SECRET);
+//   if (!request.token || !request.user) {
+//     return response.status(401).json({ error: "token missing or invalid" });
+//   }
+//   // const user = await User.findById(decodedToken.id);
+//   const user = request.user;
+//   // console.log("user in controller----------",user.id)
+//   const blog = new Blog({
+//     author: body.author,
+//     title: body.title,
+//     url: body.url,
+//     likes: body.likes || 0,
+//     user: user._id,
+//     comments: body.comments || [],
+//   });
+
+//   const savedBlog = await blog.save();
+//   user.blogs = user.blogs.concat(savedBlog._id);
+//   await user.save();
+
+//   response.json(savedBlog);
+// });
 
 //delete blog, refactored
 // eslint-disable-next-line no-unused-vars
