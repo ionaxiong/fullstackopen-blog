@@ -16,6 +16,8 @@ blogsRouter.get("/", async (request, response) => {
 });
 
 //get blog by id, refactored
+
+// eslint-disable-next-line no-unused-vars
 blogsRouter.get("/:id", async (request, response, next) => {
   const blog = await Blog.findById(request.params.id);
   if (blog) {
@@ -26,6 +28,7 @@ blogsRouter.get("/:id", async (request, response, next) => {
 });
 
 //post blog, refactored
+// eslint-disable-next-line no-unused-vars
 blogsRouter.post("/", async (request, response, next) => {
   const body = request.body;
   // const decodedToken = jwt.verify(request.token, process.env.SECRET);
@@ -43,15 +46,16 @@ blogsRouter.post("/", async (request, response, next) => {
     user: user._id,
     comments: body.comments || [],
   });
-
+  
   const savedBlog = await blog.save();
   user.blogs = user.blogs.concat(savedBlog._id);
   await user.save();
-
+  
   response.json(savedBlog);
 });
 
 //delete blog, refactored
+// eslint-disable-next-line no-unused-vars
 blogsRouter.delete("/:id", async (request, response, next) => {
   // const decodedToken = jwt.verify(request.token, process.env.SECRET);
   // console.log(request)

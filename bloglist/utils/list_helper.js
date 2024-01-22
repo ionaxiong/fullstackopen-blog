@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 var _ = require("lodash");
 
 const dummy = (blogs) => {

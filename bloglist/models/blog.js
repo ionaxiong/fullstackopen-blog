@@ -10,7 +10,7 @@ const blogSchema = new mongoose.Schema({
   //expand to contain info about the user who created it
   user:{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User"
   }
 });
 
