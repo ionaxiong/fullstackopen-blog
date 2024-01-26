@@ -116,11 +116,11 @@ blogsRouter.put("/:id", blogFinder, async (request, response) => {
   if (request.blog) {
     const body = request.body;
 
-    request.blog.author = body.author;
-    request.blog.title = body.title;
-    request.blog.url = body.url;
-    request.blog.likes = body.likes;
-    request.blog.comments = body.comments;
+    request.blog.author = body.author || request.blog.author;
+    request.blog.title = body.title || request.blog.title;
+    request.blog.url = body.url || request.blog.url;
+    request.blog.likes = body.likes || request.blog.likes;
+    request.blog.comments = body.comments || request.blog.comments;
     await request.blog.save();
     console.log(request.blog.toJSON());
     response.json(request.blog);

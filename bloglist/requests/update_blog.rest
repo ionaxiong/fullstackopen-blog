@@ -1,9 +1,17 @@
-PUT http://localhost:3003/api/blogs/610842db7a79740798251ac2
+PUT http://localhost:3003/api/blogs/2
 Content-Type: application/json
 
 {
-    "author": "Harper Lee",
-    "title": "To Kill a Mockingbird",
-    "url": "http://tokillamockingbird.com",
-    "likes": 20000
+    "likes": 6
 }
+
+
+# PUT http://localhost:3003/api/blogs/610842db7a79740798251ac2
+# Content-Type: application/json
+
+# {
+#     "author": "Harper Lee",
+#     "title": "To Kill a Mockingbird",
+#     "url": "http://tokillamockingbird.com",
+#     "likes": 20000
+# }
