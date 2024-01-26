@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const helper = require("./test_helper");
 const bcrypt = require("bcrypt");
-const User = require("../models/user");
+const User = require("../models");
 const app = require("../app");
 const api = supertest(app);
 
-const Blog = require("../models/blog");
+const Blog = require("../models");
 
 beforeEach(async () => {
   //recreate users

@@ -27,9 +27,10 @@
 // module.exports = mongoose.model("Blog", blogSchema);
 
 const { Model, DataTypes } = require("sequelize");
-const sequelize = require("../utils/database");
+const sequelize = require("../utils/db");
 
 class Blog extends Model {}
+
 Blog.init(
   {
     id: {
@@ -63,11 +64,10 @@ Blog.init(
     sequelize,
     underscored: true,
     timestamps: false,
-    modelName: "Blog",
+    modelName: "blog",
   }
 );
 
-Blog.sync();
 // Blog.sync().then(() => {
 //   Blog.create({
 //     author: "John Doe",

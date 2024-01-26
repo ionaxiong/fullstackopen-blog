@@ -36,7 +36,7 @@
 // module.exports = User;
 
 const { Model, DataTypes } = require("sequelize");
-const sequelize = require("../utils/database");
+const sequelize = require("../utils/db");
 
 class User extends Model {}
 User.init(
@@ -66,10 +66,8 @@ User.init(
     sequelize,
     underscored: true,
     timestamps: false,
-    modelName: "Blog",
+    modelName: "user",
   }
 );
-
-User.sync();
 
 module.exports = User;
