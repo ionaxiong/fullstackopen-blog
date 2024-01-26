@@ -15,6 +15,6 @@ const connectToDatabase = async () => {
   return null;
 };
 
-connectToDatabase();
+// connectToDatabase();
 
-module.exports = { connectToDatabase, sequelize };
+module.exports = { sequelize, connectToDatabase };

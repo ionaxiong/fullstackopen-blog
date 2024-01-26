@@ -1,6 +1,16 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 
+const blogFinder = async (request, response, next) => {
+  const blog = await Blog.findByPk(request.params.id);
+  if (blog) {
+    request.blog = blog;
+    next();
+  } else {
+    response.status(404).end();
+  }
+};
+
 // const getTokenFrom = (request) => {
 //   const authorization = request.get("authorization");
 //   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
@@ -24,11 +34,10 @@ blogsRouter.get("/", async (request, response) => {
 //get blog by id, refactored
 
 // eslint-disable-next-line no-unused-vars
-blogsRouter.get("/:id", async (request, response, next) => {
-  const blog = await Blog.findByPk(request.params.id);
-  if (blog) {
-    console.log(blog.toJSON());
-    response.json(blog);
+blogsRouter.get("/:id", blogFinder, async (request, response, next) => {
+  if (request.blog) {
+    console.log(request.blog.toJSON());
+    response.json(request.blog);
   } else {
     response.status(404).end();
   }
@@ -72,11 +81,10 @@ blogsRouter.post("/", async (request, response, next) => {
 
 //delete blog, refactored
 // eslint-disable-next-line no-unused-vars
-blogsRouter.delete("/:id", async (request, response, next) => {
-  const blog = await Blog.findByPk(request.params.id);
-  if (blog) {
+blogsRouter.delete("/:id", blogFinder, async (request, response, next) => {
+  if (request.blog) {
     try {
-      blog.destroy();
+      await request.blog.destroy();
       response.status(204).end();
     } catch (error) {
       return response.status(400).json({ error: error.message });
@@ -104,19 +112,18 @@ blogsRouter.delete("/:id", async (request, response, next) => {
   // }
 });
 
-blogsRouter.put("/:id", async (request, response) => {
-  const blog = await Blog.findByPk(request.params.id);
-  if (blog) {
+blogsRouter.put("/:id", blogFinder, async (request, response) => {
+  if (request.blog) {
     const body = request.body;
 
-    blog.author = body.author;
-    blog.title = body.title;
-    blog.url = body.url;
-    blog.likes = body.likes;
-    blog.comments = body.comments;
-    await blog.save();
-    console.log(blog.toJSON());
-    response.json(blog);
+    request.blog.author = body.author;
+    request.blog.title = body.title;
+    request.blog.url = body.url;
+    request.blog.likes = body.likes;
+    request.blog.comments = body.comments;
+    await request.blog.save();
+    console.log(request.blog.toJSON());
+    response.json(request.blog);
   } else {
     response.status(404).end();
   }
