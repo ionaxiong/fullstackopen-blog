@@ -13,7 +13,7 @@ const Blog = require("../models/blog");
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.findAll();
   console.log(Blog.findAll());
-  console.log("blogs are:", blogs);
+  console.log("blogs are:", JSON.stringify(blogs, null, 2));
   response.json(blogs);
 });
 // blogsRouter.get("/", async (request, response) => {
@@ -25,8 +25,9 @@ blogsRouter.get("/", async (request, response) => {
 
 // eslint-disable-next-line no-unused-vars
 blogsRouter.get("/:id", async (request, response, next) => {
-  const blog = await Blog.findById(request.params.id);
+  const blog = await Blog.findByPk(request.params.id);
   if (blog) {
+    console.log(blog.toJSON());
     response.json(blog);
   } else {
     response.status(404).end();
@@ -36,9 +37,12 @@ blogsRouter.get("/:id", async (request, response, next) => {
 //post blog, refactored
 // eslint-disable-next-line no-unused-vars
 blogsRouter.post("/", async (request, response, next) => {
-  console.log(request.body);
-  const blog = await Blog.create(request.body);
-  response.json(blog);
+  try {
+    const blog = await Blog.create(request.body);
+    response.json(blog);
+  } catch (error) {
+    return response.status(400).json({ error: error.message });
+  }
 });
 
 // blogsRouter.post("/", async (request, response, next) => {
@@ -69,20 +73,30 @@ blogsRouter.post("/", async (request, response, next) => {
 //delete blog, refactored
 // eslint-disable-next-line no-unused-vars
 blogsRouter.delete("/:id", async (request, response, next) => {
+  const blog = await Blog.findByPk(request.params.id);
+  if (blog) {
+    try {
+      blog.destroy();
+      response.status(204).end();
+    } catch (error) {
+      return response.status(400).json({ error: error.message });
+    }
+  } else {
+    response.status(404).end();
+  }
   // const decodedToken = jwt.verify(request.token, process.env.SECRET);
   // console.log(request)
-  console.log(request.params.id);
-  const blog = await Blog.findById(request.params.id);
-  const user = request.user;
-  console.log(user);
-  const userId = await user._id;
+  // const blog = await Blog.findById(request.params.id);
+  // const user = request.user;
+  // console.log(user);
+  // const userId = await user._id;
 
-  if (blog.user.toString() === userId.toString()) {
-    await Blog.findByIdAndRemove(request.params.id);
-    response.status(204).end();
-  } else {
-    response.status(401).json({ error: "wrong user" });
-  }
+  // if (blog.user.toString() === userId.toString()) {
+  //   await Blog.findByIdAndRemove(request.params.id);
+  //   response.status(204).end();
+  // } else {
+  //   response.status(401).json({ error: "wrong user" });
+  // }
   // if (!request.token || !decodedToken.id) {
   //   response.status(401).json({ error: "token missing or invalid" });
   // } else if (blog.user.toString() !== userid.toString()) {
@@ -91,20 +105,35 @@ blogsRouter.delete("/:id", async (request, response, next) => {
 });
 
 blogsRouter.put("/:id", async (request, response) => {
-  const body = request.body;
+  const blog = await Blog.findByPk(request.params.id);
+  if (blog) {
+    const body = request.body;
 
-  const blog = {
-    author: body.author,
-    title: body.title,
-    url: body.url,
-    likes: body.likes,
-    comments: body.comments,
-  };
+    blog.author = body.author;
+    blog.title = body.title;
+    blog.url = body.url;
+    blog.likes = body.likes;
+    blog.comments = body.comments;
+    await blog.save();
+    console.log(blog.toJSON());
+    response.json(blog);
+  } else {
+    response.status(404).end();
+  }
+  // const body = request.body;
 
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
-    new: true,
-  });
-  response.json(updatedBlog.toJSON());
+  // const blog = {
+  //   author: body.author,
+  //   title: body.title,
+  //   url: body.url,
+  //   likes: body.likes,
+  //   comments: body.comments,
+  // };
+
+  // const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
+  //   new: true,
+  // });
+  // response.json(updatedBlog.toJSON());
 });
 
 module.exports = blogsRouter;
