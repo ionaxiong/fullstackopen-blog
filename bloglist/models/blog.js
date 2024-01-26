@@ -68,5 +68,21 @@ Blog.init(
 );
 
 Blog.sync();
+// Blog.sync().then(() => {
+//   Blog.create({
+//     author: "John Doe",
+//     title: "Introduction to Blogging",
+//     url: "https://example.com/intro-to-blogging",
+//     likes: 8,
+//     comments: ["some comments", "testing", "does the comments work"],
+//   });
+//   Blog.create({
+//     author: "Jane Smith",
+//     title: "Tips for Writing Engaging Content",
+//     url: "https://example.com/writing-tips",
+//     likes: 0,
+//     comments: ["another comment", "just for testing"],
+//   });
+// });
 
 module.exports = Blog;

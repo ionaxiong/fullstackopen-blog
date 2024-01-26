@@ -13,6 +13,7 @@ const Blog = require("../models/blog");
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.findAll();
   console.log(Blog.findAll());
+  console.log("blogs are:", blogs);
   response.json(blogs);
 });
 // blogsRouter.get("/", async (request, response) => {
