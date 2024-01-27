@@ -54,6 +54,7 @@ blogsRouter.get("/", errorHandler, async (request, response) => {
     attributes: { exclude: ["userId"] },
     include: { model: User, attributes: ["name"] },
     where,
+    order: [["likes", "DESC"]],
   });
   // console.log(Blog.findAll());
   // console.log("blogs are:", JSON.stringify(blogs, null, 2));
