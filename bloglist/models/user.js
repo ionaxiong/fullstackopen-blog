@@ -50,6 +50,16 @@ User.init(
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
+      validate: {
+        isEmail: {
+          args: true,
+          msg: "Validation isEmail on username failed",
+        },
+        len: {
+          args: [3, 50],
+          msg: "Please enter a username between 3 and 50 characters",
+        },
+      },
     },
     name: {
       type: DataTypes.STRING,
