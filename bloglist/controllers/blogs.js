@@ -37,14 +37,19 @@ const blogFinder = async (request, res, next) => {
 
 // get all blogs, refactored
 blogsRouter.get("/", errorHandler, async (request, response) => {
-  const where = {};
+  let where = {};
   if (request.query.search) {
     console.log("searching for:", request.query.search);
-    where.title = {
+    where = {
+      [Op.or]: [
+        { title: { [Op.substring]: request.query.search } },
+        { author: { [Op.substring]: request.query.search } },
+      ],
       // [Op.iLike]: request.query.search,
-      [Op.substring]: request.query.search,
+      // [Op.substring]: request.query.search,
     };
   }
+
   const blogs = await Blog.findAll({
     attributes: { exclude: ["userId"] },
     include: { model: User, attributes: ["name"] },
