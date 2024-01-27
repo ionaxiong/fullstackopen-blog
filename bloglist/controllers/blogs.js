@@ -2,6 +2,7 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const { tokenExtractor, errorHandler } = require("../utils/middleware");
+const { Op } = require("sequelize");
 // const jwt = require("jsonwebtoken");
 // const { SECRET } = require("../utils/config");
 
@@ -36,9 +37,18 @@ const blogFinder = async (request, res, next) => {
 
 // get all blogs, refactored
 blogsRouter.get("/", errorHandler, async (request, response) => {
+  const where = {};
+  if (request.query.search) {
+    console.log("searching for:", request.query.search);
+    where.title = {
+      // [Op.iLike]: request.query.search,
+      [Op.substring]: request.query.search,
+    };
+  }
   const blogs = await Blog.findAll({
     attributes: { exclude: ["userId"] },
     include: { model: User, attributes: ["name"] },
+    where,
   });
   // console.log(Blog.findAll());
   // console.log("blogs are:", JSON.stringify(blogs, null, 2));
