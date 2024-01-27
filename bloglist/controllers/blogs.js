@@ -1,25 +1,26 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const jwt = require("jsonwebtoken");
-const { SECRET } = require("../utils/config");
+const { tokenExtractor, errorHandler } = require("../utils/middleware");
+// const jwt = require("jsonwebtoken");
+// const { SECRET } = require("../utils/config");
 
 const blogFinder = async (request) => {
   request.blog = await Blog.findByPk(request.params.id);
 };
 
-const tokenExtractor = (request, response) => {
-  const authorization = request.get("authorization");
-  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
-    try {
-      request.decodedToken = jwt.verify(authorization.substring(7), SECRET);
-    } catch (error) {
-      return response.status(401).json({ error: "token invalid" });
-    }
-  } else {
-    return response.status(401).json({ error: "token missing" });
-  }
-};
+// const tokenExtractor = (request, response) => {
+//   const authorization = request.get("authorization");
+//   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+//     try {
+//       request.decodedToken = jwt.verify(authorization.substring(7), SECRET);
+//     } catch (error) {
+//       return response.status(401).json({ error: "token invalid" });
+//     }
+//   } else {
+//     return response.status(401).json({ error: "token missing" });
+//   }
+// };
 
 // const getTokenFrom = (request) => {
 //   const authorization = request.get("authorization");
@@ -30,7 +31,7 @@ const tokenExtractor = (request, response) => {
 // };
 
 // get all blogs, refactored
-blogsRouter.get("/", async (request, response) => {
+blogsRouter.get("/", errorHandler, async (request, response) => {
   const blogs = await Blog.findAll({
     attributes: { exclude: ["userId"] },
     include: { model: User, attributes: ["name"] },
@@ -45,7 +46,7 @@ blogsRouter.get("/", async (request, response) => {
 // });
 
 //get blog by id, refactored
-blogsRouter.get("/:id", blogFinder, async (request, response) => {
+blogsRouter.get("/:id", blogFinder, errorHandler, async (request, response) => {
   if (request.blog) {
     // console.log(request.blog.toJSON());
     response.json(request.blog);
@@ -55,7 +56,7 @@ blogsRouter.get("/:id", blogFinder, async (request, response) => {
 });
 
 //post blog, refactored
-blogsRouter.post("/", tokenExtractor, async (request, response) => {
+blogsRouter.post("/", tokenExtractor, errorHandler, async (request, response) => {
   const user = await User.findByPk(request.decodedToken.id);
   const blog = await Blog.create({ ...request.body, userId: user.id, date: new Date() });
   response.json(blog);
@@ -87,7 +88,7 @@ blogsRouter.post("/", tokenExtractor, async (request, response) => {
 // });
 
 //delete blog, refactored
-blogsRouter.delete("/:id", blogFinder, async (request, response) => {
+blogsRouter.delete("/:id", blogFinder, errorHandler, async (request, response) => {
   if (request.blog) {
     await request.blog.destroy();
     response.status(204).end();
@@ -114,7 +115,7 @@ blogsRouter.delete("/:id", blogFinder, async (request, response) => {
   // }
 });
 
-blogsRouter.put("/:id", blogFinder, async (request, response) => {
+blogsRouter.put("/:id", blogFinder, errorHandler, async (request, response) => {
   if (request.blog) {
     const body = request.body;
 

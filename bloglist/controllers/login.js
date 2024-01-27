@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken");
 const loginRouter = require("express").Router();
+const { errorHandler } = require("../utils/middleware");
 
 const { SECRET } = require("../utils/config");
 const bcrypt = require("bcrypt");
-const User = require("../models");
+const User = require("../models/user");
 
-loginRouter.post("/", async (request, response) => {
+loginRouter.post("/", errorHandler, async (request, response) => {
   const body = request.body;
 
   const user = await User.findOne({ where: { username: body.username } });
