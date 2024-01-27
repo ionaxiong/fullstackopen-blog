@@ -1,0 +1,7 @@
+PUT http://localhost:3003/api/users/root
+Content-Type: application/json
+
+{
+  "username": "newroot",
+  "name": "New Root"
+}

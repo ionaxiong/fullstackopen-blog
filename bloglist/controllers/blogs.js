@@ -1,9 +1,26 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+const { SECRET } = require("../utils/config");
 
 const blogFinder = async (request) => {
   request.blog = await Blog.findByPk(request.params.id);
 };
+
+const tokenExtractor = (request, response) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+    try {
+      request.decodedToken = jwt.verify(authorization.substring(7), SECRET);
+    } catch (error) {
+      return response.status(401).json({ error: "token invalid" });
+    }
+  } else {
+    return response.status(401).json({ error: "token missing" });
+  }
+};
+
 // const getTokenFrom = (request) => {
 //   const authorization = request.get("authorization");
 //   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
@@ -14,9 +31,12 @@ const blogFinder = async (request) => {
 
 // get all blogs, refactored
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.findAll();
-  console.log(Blog.findAll());
-  console.log("blogs are:", JSON.stringify(blogs, null, 2));
+  const blogs = await Blog.findAll({
+    attributes: { exclude: ["userId"] },
+    include: { model: User, attributes: ["name"] },
+  });
+  // console.log(Blog.findAll());
+  // console.log("blogs are:", JSON.stringify(blogs, null, 2));
   response.json(blogs);
 });
 // blogsRouter.get("/", async (request, response) => {
@@ -27,7 +47,7 @@ blogsRouter.get("/", async (request, response) => {
 //get blog by id, refactored
 blogsRouter.get("/:id", blogFinder, async (request, response) => {
   if (request.blog) {
-    console.log(request.blog.toJSON());
+    // console.log(request.blog.toJSON());
     response.json(request.blog);
   } else {
     response.status(404).end();
@@ -35,8 +55,9 @@ blogsRouter.get("/:id", blogFinder, async (request, response) => {
 });
 
 //post blog, refactored
-blogsRouter.post("/", async (request, response) => {
-  const blog = await Blog.create(request.body);
+blogsRouter.post("/", tokenExtractor, async (request, response) => {
+  const user = await User.findByPk(request.decodedToken.id);
+  const blog = await Blog.create({ ...request.body, userId: user.id, date: new Date() });
   response.json(blog);
 });
 
@@ -104,7 +125,7 @@ blogsRouter.put("/:id", blogFinder, async (request, response) => {
     request.blog.comments = body.comments || request.blog.comments;
 
     await request.blog.save();
-    console.log(request.blog.toJSON());
+    // console.log(request.blog.toJSON());
     response.json(request.blog);
   } else {
     response.status(404).end();

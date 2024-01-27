@@ -47,25 +47,24 @@ User.init(
       autoIncrement: true,
     },
     username: {
-      type: DataTypes.TEXT,
-      allowNull: false,
+      type: DataTypes.STRING,
       unique: true,
+      allowNull: false,
     },
     name: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING,
     },
     passwordHash: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    blogs: {
-      type: DataTypes.ARRAY(DataTypes.TEXT),
-    },
+    // blogs: {
+    //   type: DataTypes.ARRAY(DataTypes.TEXT),
+    // },
   },
   {
     sequelize,
     underscored: true,
-    timestamps: false,
     modelName: "user",
   }
 );
