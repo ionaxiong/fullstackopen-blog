@@ -1,16 +1,9 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 
-const blogFinder = async (request, response, next) => {
-  const blog = await Blog.findByPk(request.params.id);
-  if (blog) {
-    request.blog = blog;
-    next();
-  } else {
-    response.status(404).end();
-  }
+const blogFinder = async (request) => {
+  request.blog = await Blog.findByPk(request.params.id);
 };
-
 // const getTokenFrom = (request) => {
 //   const authorization = request.get("authorization");
 //   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
@@ -32,9 +25,7 @@ blogsRouter.get("/", async (request, response) => {
 // });
 
 //get blog by id, refactored
-
-// eslint-disable-next-line no-unused-vars
-blogsRouter.get("/:id", blogFinder, async (request, response, next) => {
+blogsRouter.get("/:id", blogFinder, async (request, response) => {
   if (request.blog) {
     console.log(request.blog.toJSON());
     response.json(request.blog);
@@ -44,14 +35,9 @@ blogsRouter.get("/:id", blogFinder, async (request, response, next) => {
 });
 
 //post blog, refactored
-// eslint-disable-next-line no-unused-vars
-blogsRouter.post("/", async (request, response, next) => {
-  try {
-    const blog = await Blog.create(request.body);
-    response.json(blog);
-  } catch (error) {
-    return response.status(400).json({ error: error.message });
-  }
+blogsRouter.post("/", async (request, response) => {
+  const blog = await Blog.create(request.body);
+  response.json(blog);
 });
 
 // blogsRouter.post("/", async (request, response, next) => {
@@ -80,15 +66,10 @@ blogsRouter.post("/", async (request, response, next) => {
 // });
 
 //delete blog, refactored
-// eslint-disable-next-line no-unused-vars
-blogsRouter.delete("/:id", blogFinder, async (request, response, next) => {
+blogsRouter.delete("/:id", blogFinder, async (request, response) => {
   if (request.blog) {
-    try {
-      await request.blog.destroy();
-      response.status(204).end();
-    } catch (error) {
-      return response.status(400).json({ error: error.message });
-    }
+    await request.blog.destroy();
+    response.status(204).end();
   } else {
     response.status(404).end();
   }
@@ -121,6 +102,7 @@ blogsRouter.put("/:id", blogFinder, async (request, response) => {
     request.blog.url = body.url || request.blog.url;
     request.blog.likes = body.likes || request.blog.likes;
     request.blog.comments = body.comments || request.blog.comments;
+
     await request.blog.save();
     console.log(request.blog.toJSON());
     response.json(request.blog);
