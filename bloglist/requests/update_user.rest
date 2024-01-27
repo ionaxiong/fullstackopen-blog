@@ -1,7 +1,7 @@
-PUT http://localhost:3003/api/users/root
+PUT http://localhost:3003/api/users/newroot@root.com
 Content-Type: application/json
 
 {
-  "username": "newroot",
-  "name": "New Root"
+  "username": "root@root.com",
+  "name": "Root"
 }

@@ -6,7 +6,10 @@ const { tokenExtractor, errorHandler } = require("../utils/middleware");
 // const { SECRET } = require("../utils/config");
 
 const blogFinder = async (request, res, next) => {
-  request.blog = await Blog.findByPk(request.params.id);
+  request.blog = await Blog.findByPk(request.params.id, {
+    include: { model: User, attributes: ["name"] },
+    attributes: { exclude: ["userId"] },
+  });
   next();
 };
 
@@ -95,7 +98,9 @@ blogsRouter.delete("/:id", blogFinder, tokenExtractor, errorHandler, async (requ
   console.log("the blog is : ", request.blog);
   if (request.blog) {
     if (request.blog.userId !== user.id) {
-      return response.status(401).json({ error: "wrong user, you do not have right to delete this blog!" });
+      return response
+        .status(401)
+        .json({ error: "wrong user, you do not have right to delete this blog!" });
     }
     await request.blog.destroy();
     response.status(204).end();

@@ -1,5 +1,5 @@
 const logger = require("./logger");
-const User = require("../models");
+const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const { SECRET } = require("../utils/config");
 
@@ -54,7 +54,8 @@ const userExtractor = async (request, response, next) => {
       request.token,
       SECRET
     );
-    const user = await User.findById(decodedToken.id);
+    // const user = await User.findById(decodedToken.id);
+    const user = await User.findByPk(decodedToken.id);
     request.user = user;
   }
   next();

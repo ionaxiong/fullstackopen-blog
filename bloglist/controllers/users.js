@@ -4,10 +4,19 @@ const User = require("../models/user");
 const Blog = require("../models/blog");
 const { errorHandler } = require("../utils/middleware");
 
-const userFinder = async (request, res, next) => {
+const userFinderByUsername = async (request, res, next) => {
   console.log("request param username is : ", request.params.username);
-  request.user = await User.findOne({ where: { username: request.params.username } });
+  request.user = await User.findOne({
+    where: { username: request.params.username },
+  });
   console.log("user found is : ", request.user);
+  next();
+};
+
+const userFinderById = async (request, res, next) => {
+  request.user = await User.findByPk(request.params.id, {
+    include: { model: Blog, attributes: { exclude: ["userId"] } },
+  });
   next();
 };
 
@@ -75,10 +84,9 @@ usersRouter.post("/", errorHandler, async (request, response) => {
   // }
 });
 
-usersRouter.get("/:id", errorHandler, async (request, response) => {
-  const user = await User.findByPk(request.params.id);
-  if (user) {
-    response.json(user);
+usersRouter.get("/:id", userFinderById, errorHandler, async (request, response) => {
+  if (request.user) {
+    response.json(request.user);
   } else {
     response.status(404).end();
   }
@@ -89,7 +97,7 @@ usersRouter.delete("/:id", errorHandler, async (request, response) => {
   response.status(204).end();
 });
 
-usersRouter.put("/:username", userFinder, errorHandler, async (request, response) => {
+usersRouter.put("/:username", userFinderByUsername, errorHandler, async (request, response) => {
   if (request.user) {
     const body = request.body;
     let newPasswordHash;
