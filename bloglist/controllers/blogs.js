@@ -5,8 +5,9 @@ const { tokenExtractor, errorHandler } = require("../utils/middleware");
 // const jwt = require("jsonwebtoken");
 // const { SECRET } = require("../utils/config");
 
-const blogFinder = async (request) => {
+const blogFinder = async (request, res, next) => {
   request.blog = await Blog.findByPk(request.params.id);
+  next();
 };
 
 // const tokenExtractor = (request, response) => {
@@ -88,12 +89,18 @@ blogsRouter.post("/", tokenExtractor, errorHandler, async (request, response) =>
 // });
 
 //delete blog, refactored
-blogsRouter.delete("/:id", blogFinder, errorHandler, async (request, response) => {
+blogsRouter.delete("/:id", blogFinder, tokenExtractor, errorHandler, async (request, response) => {
+  const user = await User.findByPk(request.decodedToken.id);
+  console.log("the user is : ", user);
+  console.log("the blog is : ", request.blog);
   if (request.blog) {
+    if (request.blog.userId !== user.id) {
+      return response.status(401).json({ error: "wrong user, you do not have right to delete this blog!" });
+    }
     await request.blog.destroy();
     response.status(204).end();
   } else {
-    response.status(404).end();
+    response.status(404).json({ error: "blog not found" });
   }
   // const decodedToken = jwt.verify(request.token, process.env.SECRET);
   // console.log(request)
