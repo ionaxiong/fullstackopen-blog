@@ -4,8 +4,7 @@ Content-Type: application/json
 {
     "username": "jakousa",
     "name": "Jami Kousa",
-    "password": "jakousa",
-    "disabled": true
+    "password": "jakousa"
 }
 
 # {

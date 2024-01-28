@@ -1,8 +1,7 @@
 const bcrypt = require("bcrypt");
 const usersRouter = require("express").Router();
-const User = require("../models/user");
-const Blog = require("../models/blog");
 const { errorHandler, isAdmin, tokenExtractor } = require("../utils/middleware");
+const { Team, Blog, User } = require("../models");
 
 const userFinderByUsername = async (request, res, next) => {
   console.log("request param username is : ", request.params.username);
@@ -22,7 +21,17 @@ const userFinderById = async (request, res, next) => {
 
 usersRouter.get("/", errorHandler, async (request, response) => {
   const users = await User.findAll({
-    include: { model: Blog, attributes: { exclude: ["userId"] } },
+    include: [
+      { model: Blog, attributes: { exclude: ["userId"] } },
+      {
+        model: Blog,
+        as: "marked_blogs",
+        attributes: { exclude: ["userId"] },
+        through: { attributes: [] },
+        include: { model: User, attributes: ["name"] },
+      },
+      { model: Team, attributes: ["name", "id"], through: { attributes: [] } },
+    ],
   });
   response.json(users);
   // const users = await User.find({}).populate("blogs", {
