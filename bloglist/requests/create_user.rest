@@ -1,12 +1,12 @@
 POST http://localhost:3003/api/users
 Content-Type: application/json
 
-# {
-#     "username": "jakousa",
-#     "name": "Jami Kousa",
-#     "password": "jakousa",
-#     "disabled": true
-# }
+{
+    "username": "jakousa",
+    "name": "Jami Kousa",
+    "password": "jakousa",
+    "disabled": true
+}
 
 # {
 #     "username": "mluukkai",

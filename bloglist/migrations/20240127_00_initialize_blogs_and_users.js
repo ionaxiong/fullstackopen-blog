@@ -66,6 +66,19 @@ module.exports = {
       comments: {
         type: DataTypes.ARRAY(DataTypes.TEXT),
       },
+      year: {
+        type: DataTypes.INTEGER,
+        validate: {
+          min: {
+            args: 1991,
+            msg: "Year must be between 1991 and 2024",
+          },
+          max: {
+            args: 2024,
+            msg: "Year must be between 1991 and 2024",
+          },
+        },
+      },
       created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
