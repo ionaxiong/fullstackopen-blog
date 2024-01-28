@@ -1,7 +1,8 @@
-const readingListRouter = require("express").Router();
+const readingListsRouter = require("express").Router();
 const { User, Blog, ReadingLists } = require("../models");
+const { errorHandler, tokenExtractor } = require("../utils/middleware");
 
-readingListRouter.post("/", async (request, response) => {
+readingListsRouter.post("/", errorHandler, async (request, response) => {
   const { body } = request;
 
   if (!body.userId || !body.blogId) {
@@ -32,4 +33,18 @@ readingListRouter.post("/", async (request, response) => {
   response.status(201).json(readingList);
 });
 
-module.exports = readingListRouter;
+readingListsRouter.put("/:id", tokenExtractor, async (request, response) => {
+  const readingList = await ReadingLists.findByPk(request.params.id);
+  const user = await User.findByPk(request.decodedToken.id);
+  if (user.id !== readingList.userId) {
+    return response.status(401).json({
+      error: "You cannot update this readingList",
+    });
+  }
+  const { read } = request.body;
+  readingList.read = read;
+  await readingList.save();
+  response.json(readingList);
+});
+
+module.exports = readingListsRouter;

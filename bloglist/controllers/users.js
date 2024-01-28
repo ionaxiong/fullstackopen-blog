@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const usersRouter = require("express").Router();
-const { errorHandler, isAdmin, tokenExtractor, userFinderById } = require("../utils/middleware");
+const { errorHandler, isAdmin, tokenExtractor } = require("../utils/middleware");
 const { Team, Blog, User } = require("../models");
 
 const userFinderByUsername = async (request, res, next) => {

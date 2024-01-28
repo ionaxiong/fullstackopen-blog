@@ -1,0 +1,17 @@
+PUT http://localhost:3003/api/readinglists/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOjIsImlhdCI6MTcwNjQ1NDc3OH0._PHwAeGoq0fBzp4ibbjSuPvDZPWGZonHfdbPc5cvTek
+Content-Type: application/json
+
+{
+    "read": true
+}
+
+
+
+
+
+
+# Below is the admin's token
+
+# Below is user "jakousa"'s token
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Impha291c2EiLCJpZCI6NSwiaWF0IjoxNzA2NDU0ODQ4fQ.LC9MF9FO7Bs3A0uTnxNV_vnhYHi8yjUzbM2QexnKtXE
