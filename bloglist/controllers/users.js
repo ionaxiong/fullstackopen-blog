@@ -45,7 +45,7 @@ usersRouter.get("/:id", errorHandler, async (request, response) => {
         model: Blog,
         as: "readings",
         attributes: { exclude: ["createdAt", "updatedAt", "userId"] },
-        through: { attributes: [] },
+        through: { attributes: ["id", "read"] },
       },
     ],
   });
