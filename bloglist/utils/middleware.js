@@ -50,13 +50,18 @@ const tokenExtractor = (request, response, next) => {
 
 const userExtractor = async (request, response, next) => {
   if (request.token) {
-    const decodedToken = jwt.verify(
-      request.token,
-      SECRET
-    );
+    const decodedToken = jwt.verify(request.token, SECRET);
     // const user = await User.findById(decodedToken.id);
     const user = await User.findByPk(decodedToken.id);
     request.user = user;
+  }
+  next();
+};
+
+const isAdmin = async (req, res, next) => {
+  const user = await User.findByPk(req.decodedToken.id);
+  if (!user.admin) {
+    return res.status(401).json({ error: "operation not allowed" });
   }
   next();
 };
@@ -67,4 +72,5 @@ module.exports = {
   errorHandler,
   tokenExtractor,
   userExtractor,
+  isAdmin,
 };

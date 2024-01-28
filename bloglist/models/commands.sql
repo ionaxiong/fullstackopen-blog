@@ -5,3 +5,9 @@ VALUES ('John Doe', 'React patterns', 'https://reactpatterns.com/', 7, null),
 
 INSERT INTO users (username, name)
 VALUES ("admin", "Admin"), ("root", "Root");
+
+drop table migrations;
+drop table blogs;
+drop sequence blogs_id_seq;
+drop table users; 
+drop sequence users_id_seq;

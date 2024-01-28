@@ -1,0 +1,8 @@
+PUT http://localhost:3003/api/users/admin
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Impha291c2EiLCJpZCI6NSwiaWF0IjoxNzA2NDQwNzg0fQ.nrGsM2zGaecYwJyU8CTZmZZEPTZPHWSG9QhyVzF5sCo
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3RAcm9vdC5jb20iLCJpZCI6MiwiaWF0IjoxNzA2MzY1NDkyfQ.Gz8ZOynL-0MKra8tWyLAHlg9hP_EisTPhQKEIhpVeHY
+Content-Type: application/json
+
+{
+    "disabled": true
+}

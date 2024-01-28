@@ -2,24 +2,34 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 # {
-#     "username": "admin@admin.com",
-#     "name": "admin",
-#     "password": "admin"
+#     "username": "jakousa",
+#     "name": "Jami Kousa",
+#     "password": "jakousa",
+#     "disabled": true
 # }
 
-{
-    "username": "root@root.com",
-    "name": "root",
-    "password": "root"
-}
+# {
+#     "username": "mluukkai",
+#     "name": "Matti Luukkainen",
+#     "password": "mluukkai"
+# }
 
+# {
+#     "username": "lynx",
+#     "name": "Kalle Ilves",
+#     "password": "lynx"
+# }
 
-
-# POST http://localhost:3003/api/users
-# Content-Type: application/json
+# {
+#     "username": "root",
+#     "name": "root",
+#     "password": "root",
+#     "admin": true
+# }
 
 # {
 #     "username": "admin",
-#     "name": "admin",
-#     "password": "admin"
-# }s
+#     "name": "Admin",
+#     "password": "admin",
+#     "admin": true
+# }

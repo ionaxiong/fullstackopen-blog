@@ -39,6 +39,7 @@ const { Model, DataTypes } = require("sequelize");
 const { sequelize } = require("../utils/db");
 
 class User extends Model {}
+
 User.init(
   {
     id: {
@@ -51,10 +52,10 @@ User.init(
       unique: true,
       allowNull: false,
       validate: {
-        isEmail: {
-          args: true,
-          msg: "Validation isEmail on username failed",
-        },
+        // isEmail: {
+        //   args: true,
+        //   msg: "Validation isEmail on username failed",
+        // },
         len: {
           args: [3, 50],
           msg: "Please enter a username between 3 and 50 characters",
@@ -68,13 +69,19 @@ User.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    // blogs: {
-    //   type: DataTypes.ARRAY(DataTypes.TEXT),
-    // },
+    admin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    disabled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize,
     underscored: true,
+    timestamps: true,
     modelName: "user",
   }
 );
