@@ -6,6 +6,7 @@ const blogsRouter = require("./controllers/blogs");
 const usersRouter = require("./controllers/users");
 const loginRouter = require("./controllers/login");
 const authorRouter = require("./controllers/authors");
+const readingListsRouter = require("./controllers/readingLists");
 
 const {
   errorHandler,
@@ -25,6 +26,7 @@ app.use("/api/login", loginRouter);
 app.use("/api/blogs", userExtractor, blogsRouter);
 app.use("/api/users", userExtractor, usersRouter);
 app.use("/api/authors", userExtractor, authorRouter);
+app.use("/api/readinglists", userExtractor, readingListsRouter);
 
 if (process.env.NODE_ENV === "test") {
   const testingRouter = require("./controllers/testing");

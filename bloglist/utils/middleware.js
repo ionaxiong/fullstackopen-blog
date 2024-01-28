@@ -1,5 +1,5 @@
 const logger = require("./logger");
-const User = require("../models/user");
+const { User, Blog } = require("../models");
 const jwt = require("jsonwebtoken");
 const { SECRET } = require("../utils/config");
 
@@ -66,6 +66,12 @@ const isAdmin = async (req, res, next) => {
   next();
 };
 
+const userFinderById = async (request, res, next) => {
+  request.user = await User.findByPk(request.params.id, {
+    include: { model: Blog, attributes: { exclude: ["userId"] } },
+  });
+  next();
+};
 module.exports = {
   requestLogger,
   unknowEndPoint,
@@ -73,4 +79,5 @@ module.exports = {
   tokenExtractor,
   userExtractor,
   isAdmin,
+  userFinderById,
 };

@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const usersRouter = require("express").Router();
-const { errorHandler, isAdmin, tokenExtractor } = require("../utils/middleware");
+const { errorHandler, isAdmin, tokenExtractor, userFinderById } = require("../utils/middleware");
 const { Team, Blog, User } = require("../models");
 
 const userFinderByUsername = async (request, res, next) => {
@@ -9,13 +9,6 @@ const userFinderByUsername = async (request, res, next) => {
     where: { username: request.params.username },
   });
   console.log("user found is : ", request.user);
-  next();
-};
-
-const userFinderById = async (request, res, next) => {
-  request.user = await User.findByPk(request.params.id, {
-    include: { model: Blog, attributes: { exclude: ["userId"] } },
-  });
   next();
 };
 
@@ -42,6 +35,28 @@ usersRouter.get("/", errorHandler, async (request, response) => {
   // });
   // console.log(users);
   // response.json(users);
+});
+
+usersRouter.get("/:id", errorHandler, async (request, response) => {
+  const user = await User.findByPk(request.params.id, {
+    attributes: ["name", "username"],
+    include: [
+      {
+        model: Blog,
+        as: "readings",
+        attributes: { exclude: ["createdAt", "updatedAt", "userId"] },
+        through: { attributes: [] },
+      },
+    ],
+  });
+
+  response.json(user);
+
+  // if (request.user) {
+  //   response.json(request.user);
+  // } else {
+  //   response.status(404).end();
+  // }
 });
 
 usersRouter.post("/", errorHandler, async (request, response) => {
@@ -92,14 +107,6 @@ usersRouter.post("/", errorHandler, async (request, response) => {
 
   //   response.json(savedUser);
   // }
-});
-
-usersRouter.get("/:id", userFinderById, errorHandler, async (request, response) => {
-  if (request.user) {
-    response.json(request.user);
-  } else {
-    response.status(404).end();
-  }
 });
 
 usersRouter.delete("/:id", errorHandler, async (request, response) => {
