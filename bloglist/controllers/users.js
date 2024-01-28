@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const usersRouter = require("express").Router();
 const { errorHandler, isAdmin, tokenExtractor } = require("../utils/middleware");
 const { Team, Blog, User } = require("../models");
+const { Op } = require("sequelize");
 
 const userFinderByUsername = async (request, res, next) => {
   console.log("request param username is : ", request.params.username);
@@ -38,6 +39,16 @@ usersRouter.get("/", errorHandler, async (request, response) => {
 });
 
 usersRouter.get("/:id", errorHandler, async (request, response) => {
+  let where = {};
+  let read = {
+    [Op.in]: [true, false],
+  };
+  if (request.query.read) {
+    read = request.query.read === "true";
+    where.read = read;
+  }
+  console.log("isRead is: ", read);
+  console.log("where is: ", where);
   const user = await User.findByPk(request.params.id, {
     attributes: ["name", "username"],
     include: [
@@ -45,7 +56,7 @@ usersRouter.get("/:id", errorHandler, async (request, response) => {
         model: Blog,
         as: "readings",
         attributes: { exclude: ["createdAt", "updatedAt", "userId"] },
-        through: { attributes: ["id", "read"] },
+        through: { attributes: ["id", "read"], where },
       },
     ],
   });
