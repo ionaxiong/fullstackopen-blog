@@ -1,6 +1,6 @@
 const readingListsRouter = require("express").Router();
 const { User, Blog, ReadingLists } = require("../models");
-const { errorHandler, tokenExtractor } = require("../utils/middleware");
+const { errorHandler, tokenExtractor , tokenValidator} = require("../utils/middleware");
 
 readingListsRouter.post("/", errorHandler, async (request, response) => {
   const { body } = request;
@@ -33,7 +33,7 @@ readingListsRouter.post("/", errorHandler, async (request, response) => {
   response.status(201).json(readingList);
 });
 
-readingListsRouter.put("/:id", tokenExtractor, async (request, response) => {
+readingListsRouter.put("/:id", tokenExtractor, tokenValidator, async (request, response) => {
   const readingList = await ReadingLists.findByPk(request.params.id);
   const user = await User.findByPk(request.decodedToken.id);
   if (user.id !== readingList.userId) {

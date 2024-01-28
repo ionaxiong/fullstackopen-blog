@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const usersRouter = require("express").Router();
-const { errorHandler, isAdmin, tokenExtractor } = require("../utils/middleware");
+const { errorHandler, isAdmin, tokenExtractor, tokenValidator } = require("../utils/middleware");
 const { Team, Blog, User } = require("../models");
 const { Op } = require("sequelize");
 
@@ -47,8 +47,7 @@ usersRouter.get("/:id", errorHandler, async (request, response) => {
     read = request.query.read === "true";
     where.read = read;
   }
-  console.log("isRead is: ", read);
-  console.log("where is: ", where);
+
   const user = await User.findByPk(request.params.id, {
     attributes: ["name", "username"],
     include: [
@@ -61,8 +60,21 @@ usersRouter.get("/:id", errorHandler, async (request, response) => {
     ],
   });
 
-  response.json(user);
+  if (!user) {
+    response.status(404).end();
+  }
 
+  let teams = undefined;
+
+  if (request.query.teams) {
+    console.log("request.query.teams is: ", request.query.teams);
+    teams = await user.getTeams({
+      attributes: ["name"],
+      joinTableAttributes: [],
+    });
+    console.log("teams are: ", teams);
+  }
+  response.json({ ...user.toJSON(), teams });
   // if (request.user) {
   //   response.json(request.user);
   // } else {
@@ -155,6 +167,7 @@ usersRouter.put(
   "/:username",
   userFinderByUsername,
   tokenExtractor,
+  tokenValidator,
   isAdmin,
   errorHandler,
   async (request, response) => {

@@ -4,7 +4,7 @@ const { errorHandler } = require("../utils/middleware");
 
 const { SECRET } = require("../utils/config");
 const bcrypt = require("bcrypt");
-const User = require("../models/user");
+const { Session, User } = require("../models");
 
 loginRouter.post("/", errorHandler, async (request, response) => {
   const body = request.body;
@@ -32,6 +32,13 @@ loginRouter.post("/", errorHandler, async (request, response) => {
   };
 
   const token = jwt.sign(userForToken, SECRET);
+
+  const newSession = await Session.create({
+    token,
+    userId: user.id,
+  });
+
+  await newSession.save();
 
   response.status(200).send({ token, username: user.username, name: user.name });
 

@@ -1,4 +1,4 @@
-PUT http://localhost:3003/api/users/lynx
+PUT http://localhost:3003/api/admin/lynx
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOjIsImlhdCI6MTcwNjQ2NTExM30.aFnYEB62uM1rPd6sHJUOSWsWHmHppKM_IybwEnfTucs
 # Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3RAcm9vdC5jb20iLCJpZCI6MiwiaWF0IjoxNzA2MzY1NDkyfQ.Gz8ZOynL-0MKra8tWyLAHlg9hP_EisTPhQKEIhpVeHY
 Content-Type: application/json

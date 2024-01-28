@@ -1,5 +1,5 @@
 const logger = require("./logger");
-const { User, Blog } = require("../models");
+const { User, Blog, Session } = require("../models");
 const jwt = require("jsonwebtoken");
 const { SECRET } = require("../utils/config");
 
@@ -42,12 +42,38 @@ const tokenExtractor = (request, response, next) => {
   const authorization = request.headers.authorization;
   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
     const token = authorization.substring(7);
-    // request.token = token;
+    request.token = token;
     request.decodedToken = jwt.verify(token, SECRET);
   }
   next();
 };
 
+const tokenValidator = async (request, response, next) => {
+  console.log("tokenvalidatortokenvalidatortokenvalidatortokenvalidator");
+  const token = request.token;
+  console.log("token is: ", token);
+  if (token) {
+    const decodedTokenExisted = await Session.findOne({ where: { token: token } });
+    console.log("decodedTokenExisted: ", decodedTokenExisted);
+    if (!decodedTokenExisted) {
+      console.log("token was invalid");
+      return response.status(401).json({ error: "token invalid" });
+    }
+    console.log("token was ok");
+    next();
+  } else {
+    console.log("token didnt exist");
+    return response.status(401).json({ error: "token missing" });
+  }
+};
+
+// const userExtractor = async (request, response, next) => {
+//   if (request.decodedToken) {
+//     const user = await User.findByPk(request.decodedToken.id);
+//     request.user = user;
+//   }
+//   next();
+// };
 const userExtractor = async (request, response, next) => {
   if (request.token) {
     const decodedToken = jwt.verify(request.token, SECRET);
@@ -72,6 +98,7 @@ const userFinderById = async (request, res, next) => {
   });
   next();
 };
+
 module.exports = {
   requestLogger,
   unknowEndPoint,
@@ -80,4 +107,5 @@ module.exports = {
   userExtractor,
   isAdmin,
   userFinderById,
+  tokenValidator,
 };

@@ -37,8 +37,29 @@
 
 const { Model, DataTypes } = require("sequelize");
 const { sequelize } = require("../utils/db");
+// const { Op } = require("sequelize");
+const Blog = require("./blog");
 
-class User extends Model {}
+class User extends Model {
+  async number_of_blogs() {
+    return (await this.getBlogs()).length;
+  }
+  static async with_blogs(limit) {
+    return await User.findAll({
+      attributes: {
+        include: [[sequelize.fn("COUNT", sequelize.col("blogs.id")), "blog_count"]],
+      },
+      include: [
+        {
+          model: Blog,
+          attributes: [],
+        },
+      ],
+      group: ["user.id"],
+      having: sequelize.literal(`COUNT(blogs.id) > ${limit}`),
+    });
+  }
+}
 
 User.init(
   {
@@ -83,6 +104,32 @@ User.init(
     underscored: true,
     timestamps: true,
     modelName: "user",
+    // defaultScope: {
+    //   where: {
+    //     disabled: false,
+    //   },
+    // },
+    // scopes: {
+    //   admin: {
+    //     where: {
+    //       admin: true,
+    //     },
+    //   },
+    //   disabled: {
+    //     where: {
+    //       disabled: true,
+    //     },
+    //   },
+    //   name(value) {
+    //     return {
+    //       where: {
+    //         name: {
+    //           [Op.iLike]: value,
+    //         },
+    //       },
+    //     };
+    //   },
+    // },
   }
 );
 

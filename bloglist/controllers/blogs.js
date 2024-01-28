@@ -1,7 +1,7 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const { tokenExtractor, errorHandler } = require("../utils/middleware");
+const { tokenExtractor, errorHandler, tokenValidator } = require("../utils/middleware");
 const { Op } = require("sequelize");
 // const jwt = require("jsonwebtoken");
 // const { SECRET } = require("../utils/config");
@@ -56,8 +56,6 @@ blogsRouter.get("/", errorHandler, async (request, response) => {
     where,
     order: [["likes", "DESC"]],
   });
-  // console.log(Blog.findAll());
-  // console.log("blogs are:", JSON.stringify(blogs, null, 2));
   response.json(blogs);
 });
 // blogsRouter.get("/", async (request, response) => {
@@ -76,7 +74,7 @@ blogsRouter.get("/:id", blogFinder, errorHandler, async (request, response) => {
 });
 
 //post blog, refactored
-blogsRouter.post("/", tokenExtractor, errorHandler, async (request, response) => {
+blogsRouter.post("/", tokenExtractor, tokenValidator, errorHandler, async (request, response) => {
   const user = await User.findByPk(request.decodedToken.id);
   const blog = await Blog.create({ ...request.body, userId: user.id, date: new Date() });
   response.json(blog);
@@ -108,40 +106,47 @@ blogsRouter.post("/", tokenExtractor, errorHandler, async (request, response) =>
 // });
 
 //delete blog, refactored
-blogsRouter.delete("/:id", blogFinder, tokenExtractor, errorHandler, async (request, response) => {
-  const user = await User.findByPk(request.decodedToken.id);
-  console.log("the user is : ", user);
-  console.log("the blog is : ", request.blog);
-  if (request.blog) {
-    if (request.blog.userId !== user.id) {
-      return response
-        .status(401)
-        .json({ error: "wrong user, you do not have right to delete this blog!" });
+blogsRouter.delete(
+  "/:id",
+  blogFinder,
+  tokenExtractor,
+  tokenValidator,
+  errorHandler,
+  async (request, response) => {
+    const user = await User.findByPk(request.decodedToken.id);
+    console.log("the user is : ", user);
+    console.log("the blog is : ", request.blog);
+    if (request.blog) {
+      if (request.blog.userId !== user.id) {
+        return response
+          .status(401)
+          .json({ error: "wrong user, you do not have right to delete this blog!" });
+      }
+      await request.blog.destroy();
+      response.status(204).end();
+    } else {
+      response.status(404).json({ error: "blog not found" });
     }
-    await request.blog.destroy();
-    response.status(204).end();
-  } else {
-    response.status(404).json({ error: "blog not found" });
-  }
-  // const decodedToken = jwt.verify(request.token, process.env.SECRET);
-  // console.log(request)
-  // const blog = await Blog.findById(request.params.id);
-  // const user = request.user;
-  // console.log(user);
-  // const userId = await user._id;
+    // const decodedToken = jwt.verify(request.token, process.env.SECRET);
+    // console.log(request)
+    // const blog = await Blog.findById(request.params.id);
+    // const user = request.user;
+    // console.log(user);
+    // const userId = await user._id;
 
-  // if (blog.user.toString() === userId.toString()) {
-  //   await Blog.findByIdAndRemove(request.params.id);
-  //   response.status(204).end();
-  // } else {
-  //   response.status(401).json({ error: "wrong user" });
-  // }
-  // if (!request.token || !decodedToken.id) {
-  //   response.status(401).json({ error: "token missing or invalid" });
-  // } else if (blog.user.toString() !== userid.toString()) {
-  //   response.status(401).json({ error: "wrong user" });
-  // }
-});
+    // if (blog.user.toString() === userId.toString()) {
+    //   await Blog.findByIdAndRemove(request.params.id);
+    //   response.status(204).end();
+    // } else {
+    //   response.status(401).json({ error: "wrong user" });
+    // }
+    // if (!request.token || !decodedToken.id) {
+    //   response.status(401).json({ error: "token missing or invalid" });
+    // } else if (blog.user.toString() !== userid.toString()) {
+    //   response.status(401).json({ error: "wrong user" });
+    // }
+  }
+);
 
 blogsRouter.put("/:id", blogFinder, errorHandler, async (request, response) => {
   if (request.blog) {
